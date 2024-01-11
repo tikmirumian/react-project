@@ -1,0 +1,20 @@
+.home{
+    display: flex;
+}
+
+.button{
+    width: 160px;
+    height: 40px;
+    border-radius: 20px;
+    border: none;
+    background-color: gainsboro;
+    margin: 0 10px;
+    font-size: 16px;
+}
+
+button a{
+    text-decoration: none;
+}
+button:active {
+    border: 2px solid seagreen;
+}
