@@ -3,3 +3,34 @@
     justify-content: center;
     align-items: center;
 }
+
+.footer{
+    display: flex;
+    justify-content: center;
+    margin-top: auto;
+}
+
+.footerMain{
+    display: flex;
+    flex-direction: row;
+    padding: 30px;
+}
+
+.buttonNum{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    margin: 10px;
+    border-radius: 50%;
+    border: none;
+    background-color: skyblue;
+    cursor: pointer;
+}
+
+.buttonNum.active{
+    background-color: slategray;
+    pointer-events: none;
+    border: black 2px  solid;
+}

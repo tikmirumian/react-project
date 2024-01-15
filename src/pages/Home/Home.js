@@ -7,20 +7,20 @@ export default function Home() {
   return (
     <>
       <div className="home">
-        <button
-          className="button"
+        <div
+          className={`button ${activeSection === 'mouse' ? 'active' : ''}`}
           onClick={() => {
             setActiveSection('mouse');
           }}>
           Mouse
-        </button>
-        <button
-          className="button"
+        </div>
+        <div
+          className={`button ${activeSection === 'render' ? 'active' : ''}`}
           onClick={() => {
             setActiveSection('render');
           }}>
           Render Counter
-        </button>
+        </div>
       </div>
       <>
         {activeSection === 'mouse' ? (
