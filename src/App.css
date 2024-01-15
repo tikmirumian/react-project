@@ -23,7 +23,3 @@ header nav a.active {
     pointer-events: none;
 }
 
-main{
-    max-width: 1000px;
-    margin: 40px ;
-}

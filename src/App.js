@@ -1,7 +1,7 @@
 import './App.css';
 import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
-import Home from './pages/Home';
-import Users from './pages/Users';
+import Home from './pages/Home/Home';
+import Users from './pages/Users/Users';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import NotFound from './pages/NotFound';

@@ -1,7 +1,7 @@
-import './Home/home.css';
+import './Home.css';
 import { lazy, Suspense, useState } from 'react';
-const Mouse = lazy(() => import('./Home/Mouse'));
-const RenderCounter = lazy(() => import('./Home/RenderCounter'));
+const Mouse = lazy(() => import('./Mouse'));
+const RenderCounter = lazy(() => import('./RenderCounter'));
 export default function Home() {
   const [activeSection, setActiveSection] = useState('mouse');
   return (
