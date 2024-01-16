@@ -29,8 +29,6 @@ export default function Users() {
     void fetchUsers();
   }, [switchPage]);
 
-  console.log(switchPage);
-
   if (isLoading) {
     return <h1>...loading</h1>;
   }
