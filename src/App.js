@@ -3,7 +3,7 @@ import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home/Home';
 import Users from './pages/Users/Users';
 import Login from './pages/Login/Login';
-import Register from './pages/Register';
+import Register from './pages/Register/Register';
 import NotFound from './pages/NotFound';
 function App() {
   return (
