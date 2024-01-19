@@ -3,19 +3,19 @@ import { useEffect, useState } from 'react';
 export default function Mouse() {
   function mouseMove() {
     const [mousePosition, setMousePosition] = useState({
-      x: null,
-      y: null
+      x: 0,
+      y: 0
     });
 
     useEffect(() => {
-      function hendle(e) {
+      function handle(e: MouseEvent) {
         setMousePosition({
           x: e.pageX,
           y: e.pageY
         });
       }
-      document.addEventListener('mousemove', hendle);
-      return () => document.removeEventListener('mousemove', hendle);
+      document.addEventListener('mousemove', handle);
+      return () => document.removeEventListener('mousemove', handle);
     });
 
     return mousePosition;

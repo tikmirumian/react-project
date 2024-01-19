@@ -1,10 +1,12 @@
 import './Users.css';
 import { useEffect, useState } from 'react';
-import User from '../User/UserCard';
+import UserCard from '../User/UserCard';
+import { TResponseInfo } from 'interfaces';
+
 export default function Users() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState();
-  const [userInfo, setUserInfo] = useState();
+  const [error, setError] = useState<undefined | string>();
+  const [responseInfo, setResponseInfo] = useState<TResponseInfo>();
   const [switchPage, setSwitchPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
   const newTotal = [];
@@ -17,11 +19,12 @@ export default function Users() {
       try {
         const res = await fetch(`https://reqres.in/api/users?per_page=3&page=${switchPage} `);
         const user = await res.json();
-        setUserInfo(user);
+        setResponseInfo(user);
+        console.info(responseInfo);
         setTotalPage(user.total_pages);
         setSwitchPage(user.page);
       } catch (err) {
-        setError(err);
+        setError((err as { message: string }).message);
       } finally {
         setIsLoading(false);
       }
@@ -42,7 +45,14 @@ export default function Users() {
       <header className="header">
         <h1>Hello ReqRes users!</h1>
       </header>
-      <main>{userInfo && <User userInfo={userInfo.data} />}</main>
+      <main className="main">
+        {responseInfo &&
+          responseInfo.data.map((item) => (
+            <div key={item.id}>
+              <UserCard userInfo={item} />
+            </div>
+          ))}
+      </main>
       <div className="footer">
         <div className="footerMain">
           {totalPage !== 0 &&

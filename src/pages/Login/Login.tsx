@@ -1,43 +1,46 @@
-import './Register.css';
-import { useState } from 'react';
+import './Login.css';
+import { useState, FormEvent } from 'react';
 
-export default function Register() {
-  const [isUserRegister, setIsUserRegister] = useState(null);
-  const handleSubmit = async (e) => {
+export default function Login() {
+  const [isUserLogin, setIsUserLogin] = useState<null | boolean>(null);
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const data = new FormData(e.target);
+      const data = new FormData(e.target as HTMLFormElement);
       const loginData = [...data.entries()];
-      const newData = loginData.reduce((acc, cur) => {
-        acc[cur[0]] = cur[1];
-        return acc;
-      }, {});
+      const newData = loginData.reduce(
+        (acc, cur) => {
+          acc[cur[0]] = cur[1];
+          return acc;
+        },
+        {} as Record<string, string | FormDataEntryValue>
+      );
       const headers = new Headers();
       headers.append('Content-Type', 'application/json');
       headers.append('Accept', 'application/json');
-      const res = await fetch('https://reqres.in/api/register', {
+      const res = await fetch('https://reqres.in/api/login', {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(newData)
       });
       if (res.status !== 200) {
-        setIsUserRegister(false);
+        setIsUserLogin(false);
         return;
       }
-      const response = await res.json();
+      const response: { token: string } = await res.json();
       if (response.token) {
-        setIsUserRegister(true);
+        setIsUserLogin(true);
         return;
       }
-      setIsUserRegister(false);
+      setIsUserLogin(false);
     } catch (err) {
-      console.log(err);
+      console.info(err);
     }
   };
 
   return (
-    <div className="registerMain">
-      <h2>Register</h2>
+    <div className="loginMain">
+      <h2>Login</h2>
       <form className="form" onSubmit={handleSubmit}>
         <label htmlFor="email" className="label">
           Email:
@@ -53,11 +56,11 @@ export default function Register() {
             placeholder="Password"
             required></input>
         </label>
-        <button className="button">Register</button>
+        <button className="button">Login</button>
       </form>
       <div>
-        {isUserRegister && <h3>ou have registered successfully</h3>}
-        {isUserRegister === false && <h3>Something went wrong</h3>}
+        {isUserLogin && <h3>You are logged in</h3>}
+        {isUserLogin === false && <h3>Wrong username or password</h3>}
       </div>
     </div>
   );

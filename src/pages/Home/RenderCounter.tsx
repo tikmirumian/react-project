@@ -7,7 +7,7 @@ export default function RenderCounter() {
   reRenders.current = reRenders.current + 1;
 
   useEffect(() => {
-    console.log(value);
+    console.info(value);
   }, [value]);
   return (
     <>

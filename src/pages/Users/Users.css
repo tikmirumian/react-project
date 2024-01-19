@@ -16,6 +16,12 @@
     padding: 30px;
 }
 
+.main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
 .buttonNum{
     display: flex;
     justify-content: center;
