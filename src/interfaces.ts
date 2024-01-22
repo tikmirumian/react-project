@@ -14,3 +14,8 @@ export type TResponseInfo = {
   total_pages: number;
   data: TUserInfo[];
 };
+
+export type TAction = {
+  type: string;
+  payload: TResponseInfo;
+};

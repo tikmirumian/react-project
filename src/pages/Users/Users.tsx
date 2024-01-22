@@ -1,28 +1,41 @@
 import './Users.css';
 import { useEffect, useState } from 'react';
 import UserCard from '../User/UserCard';
-import { TResponseInfo } from 'interfaces';
+import { useDispatch, useSelector } from 'react-redux';
+import { TUserInfo } from '../../interfaces';
+import { reducer } from '../../store';
 
 export default function Users() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<undefined | string>();
-  const [responseInfo, setResponseInfo] = useState<TResponseInfo>();
   const [switchPage, setSwitchPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
+  const state = useSelector((state: ReturnType<typeof reducer>) => state);
+  const dispatch = useDispatch();
   const newTotal = [];
   for (let i = 0; i < totalPage; i++) {
     newTotal.push(i + 1);
   }
+
   useEffect(() => {
+    if (state[switchPage]) {
+      return;
+    }
+
     const fetchUsers = async () => {
       setIsLoading(true);
       try {
         const res = await fetch(`https://reqres.in/api/users?per_page=3&page=${switchPage} `);
         const user = await res.json();
-        setResponseInfo(user);
-        console.info(responseInfo);
         setTotalPage(user.total_pages);
         setSwitchPage(user.page);
+        dispatch({
+          type: 'AddState',
+          payload: {
+            page: user.page,
+            data: user.data
+          }
+        });
       } catch (err) {
         setError((err as { message: string }).message);
       } finally {
@@ -46,8 +59,8 @@ export default function Users() {
         <h1>Hello ReqRes users!</h1>
       </header>
       <main className="main">
-        {responseInfo &&
-          responseInfo.data.map((item) => (
+        {state[switchPage] &&
+          state[switchPage].map((item: TUserInfo) => (
             <div key={item.id}>
               <UserCard userInfo={item} />
             </div>
