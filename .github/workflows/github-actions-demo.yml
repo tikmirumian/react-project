@@ -7,39 +7,26 @@ jobs:
     name: check-for-merge-conflicts
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repository
+      - name: Checkout the code
         uses: actions/checkout@v3
 
       - name: Check for Merge Conflicts
         id: check_conflicts
         run: |
-          # Fetch PR details from GitHub API
-          PR_RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            "${{ github.api_url }}/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}")
+          # Set the base and head branches
+          BASE_BRANCH=${{ github.event.pull_request.base.ref }}
+          HEAD_BRANCH=${{ github.event.pull_request.head.ref }}
+          REPO_OWNER=${{ github.repository_owner }}
+          REPO_NAME=${{ github.repository }}
+          PR_NUMBER=${{ github.event.pull_request.number }}
           
-          # Check if we successfully fetched the PR details
-          if [[ -z "$PR_RESPONSE" ]]; then
-            echo "::error::Failed to fetch PR details."
-            exit 1
-          fi
+          # Fetch the base branch
+          git fetch origin $BASE_BRANCH
           
-          # Extract the mergeable state from the PR details
-          MERGEABLE_STATE=$(echo "$PR_RESPONSE" | jq -r .mergeable_state)
-          
-          echo "PR mergeable state: $MERGEABLE_STATE"
-          
-          # Check the mergeable state
-          if [[ "$MERGEABLE_STATE" == "dirty" ]]; then
+          # Check merge conflicts
+          git merge-base --is-ancestor origin/$BASE_BRANCH $HEAD_BRANCH || {
             echo "::error::Merge conflicts detected. Please resolve the conflicts and update the pull request."
             exit 1
-          elif [[ "$MERGEABLE_STATE" == "unknown" ]]; then
-            echo "::warning::Mergeable state is unknown. GitHub might still be calculating the mergeability. Please re-run the workflow after a few minutes."
-            exit 78
-          else
-            echo "No merge conflicts detected."
-          fi
-
-      - name: Fail if mergeable state is unknown
-        if: steps.check_conflicts.outputs.MERGEABLE_STATE == 'unknown'
-        run: exit 78
+          }
+          
+          echo "No merge conflicts detected."
