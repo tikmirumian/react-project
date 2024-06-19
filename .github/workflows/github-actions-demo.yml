@@ -1,5 +1,5 @@
 name: Check for Merge Conflicts
-on: [pull_request]
+on: [push]
 
 
 jobs:
@@ -7,17 +7,8 @@ jobs:
     name: check-for-merge-conflicts
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - name: Check for Merge Conflicts
-        run: |
-          git fetch origin +refs/heads/${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}
-          if ! git merge --no-commit --no-ff origin/${{ github.base_ref }}; then
-            echo "::error::Merge conflicts detected. Please resolve the conflicts and update the pull request."
-            exit 1
-          else
-            echo "No merge conflicts detected."
-          fi
-      - name: Clean up
-        run: git merge --abort || true
-
+          # Checkout the source code so we have some files to look at.
+        - uses: actions/checkout@v2
+          # Run the actual merge conflict finder
+        - name: Merge Conflict finder
+          uses: olivernybroe/action-conflict-finder@v2.0
