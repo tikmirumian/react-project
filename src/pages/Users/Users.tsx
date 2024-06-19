@@ -71,17 +71,14 @@ export default function Users() {
           {totalPage !== 0 &&
             newTotal.map((num, index) => {
               return (
-                <>
-                  <div
-                    className={`buttonNum ${switchPage === num ? 'active' : ''}`}
-                    onClick={() => {
-                      setSwitchPage(num);
-                    }}
-                    key={index}>
-                    {num}
-                  </div>
-                  <span>new</span>
-                </>
+                <div
+                  className={`buttonNum ${switchPage === num ? 'active' : ''}`}
+                  onClick={() => {
+                    setSwitchPage(num);
+                  }}
+                  key={index}>
+                  {num}
+                </div>
               );
             })}
         </div>
