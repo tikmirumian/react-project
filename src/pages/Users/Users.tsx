@@ -72,7 +72,6 @@ export default function Users() {
             newTotal.map((num, index) => {
               return (
                 <>
-                  <span>new</span>
                   <div
                     className={`buttonNum ${switchPage === num ? 'active' : ''}`}
                     onClick={() => {
@@ -81,6 +80,7 @@ export default function Users() {
                     key={index}>
                     {num}
                   </div>
+                  <span>new</span>
                 </>
               );
             })}
