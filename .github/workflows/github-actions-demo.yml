@@ -1,32 +1,78 @@
 name: Check for Merge Conflicts
-on: [push]
 
+on:
+  pull_request:
+    types: [synchronize, opened, reopened]
 
 jobs:
-  check-conflicts:
-    name: check-for-merge-conflicts
+  check_conflicts:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout the code
         uses: actions/checkout@v3
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+
       - name: Check for Merge Conflicts
         id: check_conflicts
         run: |
-          # Set the base and head branches
-          BASE_BRANCH=${{ github.event.pull_request.base.ref }}
-          HEAD_BRANCH=${{ github.event.pull_request.head.ref }}
-          REPO_OWNER=${{ github.repository_owner }}
-          REPO_NAME=${{ github.repository }}
-          PR_NUMBER=${{ github.event.pull_request.number }}
+          # Create a script to check mergeable state and add label if needed
+          cat << 'EOF' > check_mergeable.js
+          const core = require('@actions/core');
+          const github = require('@actions/github');
           
-          # Fetch the base branch
-          git fetch origin $BASE_BRANCH
+          async function run() {
+            try {
+              const token = core.getInput('github_token');
+              const octokit = github.getOctokit(token);
           
-          # Check merge conflicts
-          git merge-base --is-ancestor origin/$BASE_BRANCH $HEAD_BRANCH || {
-            echo "::error::Merge conflicts detected. Please resolve the conflicts and update the pull request."
-            exit 1
+              const { owner, repo } = github.context.repo;
+              const pull_number = github.context.payload.pull_request.number;
+          
+              // Fetch the pull request details
+              const { data: pullRequest } = await octokit.rest.pulls.get({
+                owner,
+                repo,
+                pull_number,
+              });
+          
+              const mergeable = pullRequest.mergeable;
+              const mergeable_state = pullRequest.mergeable_state;
+          
+              console.log(`PR mergeable: ${mergeable}`);
+              console.log(`PR mergeable state: ${mergeable_state}`);
+          
+              if (mergeable === false || mergeable_state === 'dirty') {
+                core.setFailed("Merge conflicts detected. Please resolve the conflicts and update the pull request.");
+          
+                // Add a label to the pull request
+                await octokit.rest.issues.addLabels({
+                  owner,
+                  repo,
+                  issue_number: pull_number,
+                  labels: ['merge-conflict'],
+                });
+          
+                console.log('Label "merge-conflict" added to the pull request.');
+              } else {
+                console.log("No merge conflicts detected.");
+              }
+            } catch (error) {
+              core.setFailed(`Failed to fetch PR details: ${error.message}`);
+            }
           }
           
-          echo "No merge conflicts detected."
+          run();
+          EOF
+          
+          # Run the script
+          node check_mergeable.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
