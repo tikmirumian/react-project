@@ -68,6 +68,7 @@ export default function Users() {
       </main>
       <div className="footer">
         <div>new</div>
+        <div>new2</div>
         <div className="footerMain">
           {totalPage !== 0 &&
             newTotal.map((num, index) => {
